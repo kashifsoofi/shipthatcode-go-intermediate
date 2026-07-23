@@ -5,27 +5,44 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
-func safeDivide(a, b int) (q int, err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			err = fmt.Errorf("divide by zero")
-		}
-	}()
-	return a / b, nil
+type Stack struct {
+	items []int
+}
+
+func (s *Stack) Push(x int) {
+	s.items = append(s.items, x)
+}
+
+func (s *Stack) Pop() (int, bool) {
+	if len(s.items) > 0 {
+		len := len(s.items)
+		item := s.items[len-1]
+		s.items = s.items[:len-1]
+		return item, true
+	}
+
+	return 0, false
 }
 
 func main() {
 	sc := bufio.NewScanner(os.Stdin)
 	sc.Scan()
-	a, _ := strconv.Atoi(sc.Text())
-	sc.Scan()
-	b, _ := strconv.Atoi(sc.Text())
-	q, err := safeDivide(a, b)
-	if err != nil {
-		fmt.Printf("error: %s\n", err)
-	} else {
-		fmt.Printf("result: %d\n", q)
+	parts := strings.Fields(sc.Text())
+	var s Stack
+	for _, p := range parts {
+		n, _ := strconv.Atoi(p)
+		_ = n
+		s.Push(n)
 	}
+	for {
+		x, ok := s.Pop()
+		if !ok {
+			break
+		}
+		fmt.Println(x)
+	}
+	_ = fmt.Print
 }
